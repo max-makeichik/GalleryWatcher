@@ -26,14 +26,16 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/images_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
 
             <Button
                 android:id="@+id/load_images_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/load_gallery" />
+                android:text="@string/load_gallery"
+                android:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"
