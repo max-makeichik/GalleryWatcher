@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gallery_spacing">8dp</dimen>
+    <dimen name="item_gallery_image_height">100dp</dimen>
+    <dimen name="item_gallery_padding">12dp</dimen>
+    <dimen name="item_gallery_name_text_size">16sp</dimen>
+    <dimen name="item_gallery_size_text_size">16sp</dimen>
+    <dimen name="item_gallery_hash_text_size">12sp</dimen>
+    <dimen name="item_gallery_size_padding_bottom">2dp</dimen>
+</resources>

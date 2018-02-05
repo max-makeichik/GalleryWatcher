@@ -20,9 +20,14 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/rxjava.properties'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 def supportVersion = '27.0.2'
+def glideVersion = '4.5.0'
 def butterKnifeVersion = '8.8.1'
 def daggerVersion = '2.12'
 def moxyVersion = '1.5.3'
@@ -55,8 +60,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + butterKnifeVersion
 
     // Images
-    implementation 'com.github.bumptech.glide:glide:4.5.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    implementation 'com.github.bumptech.glide:glide:' + glideVersion
+    annotationProcessor 'com.github.bumptech.glide:compiler:' + glideVersion
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
