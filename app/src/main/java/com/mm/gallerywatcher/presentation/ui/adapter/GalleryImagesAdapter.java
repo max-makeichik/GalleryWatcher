@@ -47,6 +47,11 @@ public class GalleryImagesAdapter extends AnimatedRecyclerViewAdapter<RecyclerVi
         return items.size();
     }
 
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
     public void addItem(GalleryImage image) {
         items.add(image);
         notifyItemInserted(items.size() - 1);

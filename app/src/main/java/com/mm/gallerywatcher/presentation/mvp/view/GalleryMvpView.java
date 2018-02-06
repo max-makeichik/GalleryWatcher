@@ -7,5 +7,7 @@ import com.mm.gallerywatcher.domain.global.model.GalleryImage;
  */
 
 public interface GalleryMvpView extends BaseMvpView {
+    void clearImages();
+
     void addImage(GalleryImage images);
 }

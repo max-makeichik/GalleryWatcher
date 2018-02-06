@@ -36,7 +36,7 @@ public class GalleryImageViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Context context, GalleryImage image) {
         imageName.setText(image.getName());
-        imageSize.setText(context.getString(R.string.item_gallery_size, image.getSize()));
+        imageSize.setText(image.getSize());
         imageHash.setText(Util.md5(image.getImagePath()));
         LoadImageUtil.loadGalleryImage(context, image.getImagePath(), imageView);
     }

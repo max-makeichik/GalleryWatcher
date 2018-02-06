@@ -11,7 +11,7 @@ import android.view.animation.Animation;
  */
 public class AnimatedRecyclerViewAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
 
-    private final static int ADD_ANIMATION_FADE_DURATION = 200;
+    private final static int ADD_ANIMATION_FADE_DURATION = 100;
     private int lastPosition = -1;
 
     @Override

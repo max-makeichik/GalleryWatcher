@@ -12,4 +12,9 @@ public interface IGalleryImagesModel {
 
     Observable<GalleryImage> getImages();
 
+    void clearImages();
+
+    boolean isImagesLoaded();
+
+    void setImagesLoaded(boolean imagesLoaded);
 }

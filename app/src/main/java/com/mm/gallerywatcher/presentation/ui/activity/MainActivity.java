@@ -1,5 +1,9 @@
 package com.mm.gallerywatcher.presentation.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +24,8 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.mm.gallerywatcher.util.view.GridSpacingItemDecoration.TOP_SPACING_MULTIPLIER;
 
 /**
  * Created by Maksim Makeychik on 04.02.2018.
@@ -49,15 +55,35 @@ public class MainActivity extends BaseActivity implements GalleryMvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setToolbar(R.string.app_name);
+
         initRecyclerView();
+        registerGalleryImagesUpdates();
     }
 
     private void initRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, gallerySpacing, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(SPAN_COUNT, gallerySpacing, true, TOP_SPACING_MULTIPLIER));
         adapter = new GalleryImagesAdapter(this);
         recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * Register broadcast receiver to get gallery update broadcasts
+     */
+    private void registerGalleryImagesUpdates() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        intentFilter.addDataScheme("file");
+        registerReceiver(galleryScanReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.updateImages();
     }
 
     @Override
@@ -66,13 +92,31 @@ public class MainActivity extends BaseActivity implements GalleryMvpView {
         super.showLoading();
     }
 
+    @Override
+    public void hideLoading() {
+        loadImagesButton.setEnabled(true);
+        super.hideLoading();
+    }
+
     @OnClick(R.id.load_images_btn)
     void onLoadImagesClick() {
         if (PermissionUtils.hasStorageReadPermissions(this)) {
-            presenter.loadImages();
+            presenter.getImages();
         } else {
             PermissionUtils.requestStorageReadPermissions(this, PERMISSION_REQUEST_CODE_READ_STORAGE);
         }
+    }
+
+    @Override
+    public void clearImages() {
+        adapter.clear();
+    }
+
+    @Override
+    public void addImage(GalleryImage image) {
+        loadImagesButton.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        adapter.addItem(image);
     }
 
     @Override
@@ -81,7 +125,7 @@ public class MainActivity extends BaseActivity implements GalleryMvpView {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE_READ_STORAGE:
                 if (PermissionUtils.hasStorageReadPermissions(this)) {
-                    presenter.loadImages();
+                    presenter.getImages();
                 } else {
                     showError(R.string.error_permission_read_storage);
                 }
@@ -90,9 +134,26 @@ public class MainActivity extends BaseActivity implements GalleryMvpView {
     }
 
     @Override
-    public void addImage(GalleryImage image) {
-        loadImagesButton.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        adapter.addItem(image);
+    public void onDestroy() {
+        unregisterReceiverSafe(galleryScanReceiver);
+        super.onDestroy();
+    }
+
+    /**
+     * This receiver gets called when the media scanner starts up or finishes, and
+     * when the sd card is unmounted.
+     */
+    private BroadcastReceiver galleryScanReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            presenter.updateImages();
+        }
+    };
+
+    private void unregisterReceiverSafe(BroadcastReceiver receiver) {
+        try {
+            unregisterReceiver(receiver);
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 }

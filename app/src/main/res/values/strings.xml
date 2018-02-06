@@ -2,7 +2,6 @@
 
     <string name="app_name">GalleryWatcher</string>
     <string name="load_gallery">Load gallery</string>
-    <string name="item_gallery_size">%s Mb</string>
 
     <!--errors-->
     <string name="error_permission_read_storage">App needs your permission to read images</string>

@@ -21,33 +21,64 @@ public class MainPresenter extends BasePresenter<GalleryMvpView> {
     @Inject
     IGalleryImagesModel galleryImagesModel;
 
+    private boolean isImagesLoading;
+
     public MainPresenter() {
         App.getGalleryImagesComponent().inject(this);
     }
 
-    @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        loadImages();//todo!
+    public void getImages() {
+        getViewState().showLoading();
+        getViewState().clearImages();
+        loadImages();
     }
 
     public void loadImages() {
-        getViewState().showLoading();
+        if (isImagesLoading()) {
+            return;
+        }
+        setImagesLoading(true);
         disposables.add(galleryImagesModel.getImages()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(image -> {
+                            setImagesLoading(true);
                             getViewState().hideLoading();
                             getViewState().addImage(image);
                         },
                         throwable -> {
+                            setImagesLoading(false);
                             onError(throwable);
+                            getViewState().hideLoading();
                             getViewState().showError(R.string.error_getting_images);
-                        }));
+                        }, () -> setImagesLoading(false)));
+    }
+
+    /**
+     * Update images only if user loaded them earlier
+     */
+    public void updateImages() {
+        if (!galleryImagesModel.isImagesLoaded()) {
+            return;
+        }
+        loadImages();
+    }
+
+    public boolean isImagesLoading() {
+        return isImagesLoading;
+    }
+
+    public void setImagesLoading(boolean imagesLoading) {
+        isImagesLoading = imagesLoading;
     }
 
     private void onError(Throwable throwable) {
         throwable.printStackTrace();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        galleryImagesModel.clearImages();
+    }
 }

@@ -20,8 +20,10 @@ public class GalleryImagesModelImpl implements IGalleryImagesModel {
 
     private static final String TAG = GalleryImagesModelImpl.class.getSimpleName();
 
-    private final IGalleryImagesRepository galleryImagesRepository;
     private final Context context;
+    private final IGalleryImagesRepository galleryImagesRepository;
+
+    private boolean imagesLoaded;
 
     public GalleryImagesModelImpl(Context context, IGalleryImagesRepository galleryImagesRepository) {
         this.context = context;
@@ -32,29 +34,41 @@ public class GalleryImagesModelImpl implements IGalleryImagesModel {
     public Observable<GalleryImage> getImages() {
         Log.d(TAG, "getImages");
         return Observable.create(emitter -> {
-            int logCounts = 0;
-            Uri uri = MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI;
-            String[] projection = {MediaStore.Images.Thumbnails.DATA};
-
+            Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            String[] projection = {MediaStore.MediaColumns.DATA};
             Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if (cursor == null) {
-                emitter.onError(new NullPointerException());
+            if (cursor == null || cursor.getCount() == 0) {
+                emitter.onError(new IllegalStateException("No images found"));
+                setImagesLoaded(false);
                 return;
             }
             int columnIndexData = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-            //int columnIndexFolderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
             while (cursor.moveToNext()) {
-                GalleryImage galleryItem = new GalleryImage();
-                //galleryItem.setStrFolder(cursor.getString(columnIndexFolderName));
-                galleryItem.setImagePath(cursor.getString(columnIndexData));
-
-                Log.d(TAG, "getImages galleryItem " + galleryItem);
-                emitter.onNext(galleryItem);
-                ++logCounts;
+                GalleryImage galleryImage = new GalleryImage();
+                galleryImage.setPath(cursor.getString(columnIndexData));
+                if (galleryImagesRepository.addGalleryImage(galleryImage)) {
+                    Log.d(TAG, "getImages galleryItem " + galleryImage);
+                    emitter.onNext(galleryImage);
+                }
             }
-            Log.d(TAG, "getImages logCounts " + logCounts);
             cursor.close();
             emitter.onComplete();
+            setImagesLoaded(true);
         });
+    }
+
+    @Override
+    public void clearImages() {
+        galleryImagesRepository.clearImages();
+    }
+
+    @Override
+    public boolean isImagesLoaded() {
+        return imagesLoaded;
+    }
+
+    @Override
+    public void setImagesLoaded(boolean imagesLoaded) {
+        this.imagesLoaded = imagesLoaded;
     }
 }

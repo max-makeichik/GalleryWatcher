@@ -1,6 +1,8 @@
 package com.mm.gallerywatcher.domain.global.model;
 
-import java.net.URLConnection;
+import com.mm.gallerywatcher.util.Util;
+
+import java.io.File;
 
 /**
  * May be a folder with images or an image itself
@@ -10,45 +12,52 @@ import java.net.URLConnection;
 
 public class GalleryImage {
 
-    private String strFolder;
     private String imagePath;
     private String name;
-    private int size;
-
-    public String getStrFolder() {
-        return strFolder;
-    }
-
-    public void setStrFolder(String strFolder) {
-        this.strFolder = strFolder;
-    }
+    private long size;
 
     public String getImagePath() {
         return imagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setPath(String path) {
+        this.imagePath = path;
+        this.name = Util.getName(path);
+        try {
+            File f = new File(path);
+            this.size = f.length();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean isImage() {
-        String mimeType = URLConnection.guessContentTypeFromName(strFolder);
-        return mimeType != null && mimeType.startsWith("image");
+    public String getName() {
+        return Util.getName(name);
+    }
+
+    public String getSize() {
+        return Util.getHumanReadableByteCount(size, true);
     }
 
     @Override
     public String toString() {
         return "GalleryItem{" +
-                "strFolder='" + strFolder + '\'' +
                 ", imagePath=" + imagePath +
                 '}';
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GalleryImage that = (GalleryImage) o;
+
+        return imagePath.equals(that.imagePath);
     }
 
-    public String getSize() {
-        return size + "";
+    @Override
+    public int hashCode() {
+        return imagePath.hashCode();
     }
 }
