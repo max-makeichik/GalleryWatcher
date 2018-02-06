@@ -1,6 +1,10 @@
 <resources>
+
     <string name="app_name">GalleryWatcher</string>
     <string name="load_gallery">Load gallery</string>
+
+    <!--errors-->
     <string name="error_permission_read_storage">App needs your permission to read images</string>
     <string name="error_getting_images">No images found</string>
+
 </resources>
