@@ -9,6 +9,7 @@ import android.util.Log;
 import com.mm.gallerywatcher.data.repository.repository_interface.IGalleryImagesRepository;
 import com.mm.gallerywatcher.domain.global.model.GalleryImage;
 import com.mm.gallerywatcher.domain.model_interface.IGalleryImagesModel;
+import com.mm.gallerywatcher.util.exception.NoImagesFoundException;
 
 import io.reactivex.Observable;
 
@@ -38,7 +39,7 @@ public class GalleryImagesModelImpl implements IGalleryImagesModel {
             String[] projection = {MediaStore.MediaColumns.DATA};
             Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
             if (cursor == null || cursor.getCount() == 0) {
-                emitter.onError(new IllegalStateException("No images found"));
+                emitter.onError(new NoImagesFoundException());
                 setImagesLoaded(false);
                 return;
             }
