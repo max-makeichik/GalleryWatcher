@@ -14,7 +14,6 @@ import com.mm.gallerywatcher.di.module.ContextModule;
 
 public class App extends Application {
 
-    private static final String TAG = App.class.getSimpleName();
     private static AppComponent appComponent;
     private static GalleryImagesComponent galleryImagesComponent;
 

@@ -35,7 +35,7 @@ public class Util {
         return "";
     }
 
-    public static String getName(String path) {
+    public static String getImageName(String path) {
         String b[] = path.split("/");
         return b[b.length - 1];
     }

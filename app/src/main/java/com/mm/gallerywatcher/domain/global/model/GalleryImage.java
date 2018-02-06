@@ -22,7 +22,7 @@ public class GalleryImage {
 
     public void setPath(String path) {
         this.imagePath = path;
-        this.name = Util.getName(path);
+        this.name = Util.getImageName(path);
         try {
             File f = new File(path);
             this.size = f.length();
@@ -32,7 +32,7 @@ public class GalleryImage {
     }
 
     public String getName() {
-        return Util.getName(name);
+        return Util.getImageName(name);
     }
 
     public String getSize() {

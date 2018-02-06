@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.mm.gallerywatcher.data.repository.repository_interface.IGalleryImagesRepository;
 import com.mm.gallerywatcher.domain.global.model.GalleryImage;
@@ -33,7 +32,6 @@ public class GalleryImagesModelImpl implements IGalleryImagesModel {
 
     @Override
     public Observable<GalleryImage> getImages() {
-        Log.d(TAG, "getImages");
         return Observable.create(emitter -> {
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             String[] projection = {MediaStore.MediaColumns.DATA};
@@ -48,7 +46,6 @@ public class GalleryImagesModelImpl implements IGalleryImagesModel {
                 GalleryImage galleryImage = new GalleryImage();
                 galleryImage.setPath(cursor.getString(columnIndexData));
                 if (galleryImagesRepository.addGalleryImage(galleryImage)) {
-                    Log.d(TAG, "getImages galleryItem " + galleryImage);
                     emitter.onNext(galleryImage);
                 }
             }

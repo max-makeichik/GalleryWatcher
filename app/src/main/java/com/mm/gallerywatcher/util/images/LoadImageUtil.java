@@ -6,8 +6,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import static com.bumptech.glide.load.engine.DiskCacheStrategy.NONE;
-
 /**
  * Created by Andrey V. Murzin on 30.06.17.
  */
@@ -20,7 +18,6 @@ public class LoadImageUtil {
                 .thumbnail(0.5f)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .skipMemoryCache(true)
-                .diskCacheStrategy(NONE)
                 .into(imageView);
     }
 
